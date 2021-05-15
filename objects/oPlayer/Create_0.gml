@@ -13,7 +13,7 @@ spd = 5.5;
 grav = 0.09;
 jmp = -1.87;   //because negative y values goes up instead of down
 jmpMax = 0.11;  //a constant for highest possible jump
-firRate = 700;
+firRate = 30;
 jumpd = 0;
 
 move_speed = 0;
@@ -32,7 +32,6 @@ counter = 0;
 enum player_state{ 
 	normal,
 	hitstun,
-	melee,
 }
 
 enum player_mode{

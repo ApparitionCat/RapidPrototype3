@@ -1,7 +1,7 @@
 /// @description Insert description here
 // You can write your code in this editor
 
-
+if(hp <= 0){game_end()}
 
 if(state == player_state.normal){
 	#region normal
@@ -10,7 +10,6 @@ if(state == player_state.normal){
     grav = 0.45;
     jmp = -13.35;   //because negative y values goes up instead of down
     jmpMax = 0.11;  //a constant for highest possible jump
-    firRate = 1400;
 	
 	counter += 1;
 	object_set_visible(oPlayer, true);
@@ -21,14 +20,13 @@ right_key = keyboard_check(ord("D"));
 left_key = keyboard_check(ord("A"));
 jump = keyboard_check_direct(vk_space);}
 jump_held = keyboard_check(vk_space);
-if(keyboard_check(ord("M")))and (place_meeting(x,y+1,oWall)){state = player_state.melee counter = 0}
 
 
 if(right_key){Ndir = 1; image_xscale = -2;}
 if(left_key){Ndir = -1; image_xscale = 2;}
 
-if(keyboard_check(ord("N"))) and (counter >= 60*firRate){
-	var bul = instance_create_layer(x+1*dir,y,"Instances", pNeedle_Player)
+if(keyboard_check(ord("N"))) and (counter >= firRate){
+	var bul = instance_create_layer(x+1*dir,y,"Instances", pPlayerBullet)
 	counter = 0;
 	 if(image_xscale <= -1){
         bul.direction = 0;
@@ -40,8 +38,7 @@ var movement = right_key - left_key;
 var sped = spd;
 move_speed = movement * sped;  
 
-fall_spd += (grav);  //there is something wrong with delta time and graviny/jumo
-//for now do not implement delta time to these
+fall_spd += (grav);  
 
 if (jump) and (place_meeting(x,y+1,oWall)) and (!jumpd){ //this if condition controls how high the player can jump
 	fall_spd = jmp; //changing this will increase (higher negative value) or decrease (positive value) the height of the jump
@@ -52,10 +49,6 @@ if(!jump)and (place_meeting(x,y+1,oWall)) {jumpd = 0};
 
 if(fall_spd < 0) && (!jump_held){fall_spd = max(fall_spd,-3)}
 
-/*
-show_debug_message(global.FRAME_DELTA_OVERRIDE)
-show_debug_message(global.avgDelt)
-*/
 
 #region knockback
 //-------------------------------------------------------knockback
@@ -82,7 +75,6 @@ if(nohurt){ //invincibility
 							
 //the following are the code for collision on walls and platforms, first is sideways collision and 
 //second lets the player walk on platforms/floors without sinking/falling trough them
-//collision fix this later-------------------------------------------------------
 if(place_meeting(x + move_speed,y,oWall)){
 	while(!place_meeting(x + sign(move_speed), y, oWall)){
 		x = x + sign(move_speed);
@@ -100,26 +92,12 @@ if(place_meeting(x,y + fall_spd,oWall)){
 y = y + fall_spd; //this applies the falling speed to the player
 //---------------------------------------------------------------------------------
 
-visible = true; //player is visible in this state
+visible = true; 
 
 #endregion
 
 }
 
-
-if (state == player_state.melee){
-	#region melee
-	counter += 1;
-	if(counter <= 1){
-	instance_create_layer(x+100*Ndir,y,"Instances", oMelee_player)
-	}
-	if(counter >= 20){counter = 0 state = player_state.normal}
-	
-	#endregion
-}
-
-
-// transition collision
 
 var instance = instance_place(x,y,room_transition){
 	if(instance != noone){
